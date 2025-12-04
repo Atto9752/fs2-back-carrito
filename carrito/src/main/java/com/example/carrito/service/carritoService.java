@@ -1,11 +1,13 @@
 package com.example.carrito.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.carrito.model.dto.carrito;
+import com.example.carrito.model.dto.detalleCarrito;
 import com.example.carrito.repository.carritoRepositorio;
 
 @Service
@@ -20,6 +22,11 @@ public class carritoService {
     }
 
     public carrito guardarCarrito(carrito carrito) {
+        if (carrito.getItems() != null){
+            for (detalleCarrito item : carrito.getItems()){
+                item.setCarrito(carrito);
+            }
+        }
         return carritoRepo.save(carrito);
     }
 
@@ -31,7 +38,37 @@ public class carritoService {
         return carritoRepo.findById(id).orElse(null);
     }
 
-    //recordar añadir para actualizar carrito
+    // ACTUALIZAR CARRITO
+    public carrito actualizarCarrito (Long id, carrito carritoActualizado) {
 
+        Optional<carrito> carritoExistenteOpt = carritoRepo.findById(id);
 
+        if (carritoExistenteOpt.isPresent()){
+
+            carrito carritoExistente = carritoExistenteOpt.get();
+
+            //limpiar items actuales del carrito existente
+            carritoExistente.getItems().clear();
+
+            // actualizar dueño del carrito
+            carritoExistente.setIdUsuario(carritoActualizado.getIdUsuario());
+            // actualizar fecha
+            carritoExistente.setFechaCreacion(carritoActualizado.getFechaCreacion());
+
+            // añadir items al carrito existente
+            if (carritoActualizado.getItems() != null){
+                for (detalleCarrito item : carritoActualizado.getItems()){
+                    // para vincular el nuevo detalle al carrito existente
+                    item.setCarrito(carritoExistente);
+                    carritoExistente.getItems().add(item);
+                }
+            }
+
+            // para guardar los cambios
+            return carritoRepo.save(carritoExistente);
+            
+        } else {
+            return null;  // en caso de que el carrito no exista;
+        }
+    }
 }

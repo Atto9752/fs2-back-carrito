@@ -11,7 +11,6 @@ import com.example.carrito.service.carritoService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,17 +34,17 @@ public class carritoControlador {
         return servicio.guardarCarrito(carrito);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete")
     public void eliminarCarrito(@RequestParam Long id){
         servicio.eliminarCarrito(id);
     }
 
-    @GetMapping("/search/{id}")
+    @GetMapping("/search")
     public carrito buscarCarrito(@RequestParam Long id){
         return servicio.buscarCarrito(id);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update")
     public carrito actualizarCarrito(@RequestParam Long id, @RequestBody carrito carrito){
         return servicio.actualizarCarrito(id, carrito);
     }
